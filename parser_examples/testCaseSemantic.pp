@@ -6,4 +6,5 @@ VACUO a;
 ENT e[VACUO f, VACUO g](
 ENT h;
 VACUO a;
+h = z;
 )

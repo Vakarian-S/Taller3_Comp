@@ -68,7 +68,7 @@ class BuildTablaSimbolosVisitor(object):
         error_var = self.current_scope.lookup(var_name, current_scope_only=True)
         if error_var:
             self.errors_tabla_simbolos.write('error en declaracion de variable: '
-             + str(type_name) +' ' + str(var_name) + ', ya fue declarada anteriormente')
+             + str(type_name) +' ' + str(var_name) + ', ya fue declarada anteriormente'+'\n')
 
         self.current_scope.insert(var_symbol)
         #error_var = self.current_scope.lookup(declaracion_var.ID_t);
@@ -139,16 +139,33 @@ class BuildTablaSimbolosVisitor(object):
             else:
                 sentencia_comp.lista_sentencias_p.accept(self)
 
+    def visit_sentencia_expr(self, sentencia_expr):
+        if sentencia_expr.expresion_p is not None:
+            if isinstance(sentencia_expr.expresion_p, str):
+                print('nothing')
+            else:
+                sentencia_expr.expresion_p.accept(self)
+
+
     def visit_expresion(self, expresion):
         var_name = expresion.var_p
-        var_symbol = self.tabla_simbolos.lookup(var_name)
+        var_symbol = self.current_scope.lookup(var_name)
         if var_symbol is None:
-            raise Exception(
-                "Error: Symbol(identifier) not found '%s'" % var_name
-            )
+            self.errors_tabla_simbolos.write('error en llamado a variable: '
+                                             + str(var_name) +
+                                             ', la variable no ha sido declarada' + '\n')
+        if isinstance(expresion.expresion_p, str):
+            var_name2 = expresion.expresion_p
+            var_symbol2 = self.current_scope.lookup(var_name2)
+            if var_symbol2 is None:
+                self.errors_tabla_simbolos.write('error en llamado a variable: '
+                                                 + str(var_name2) +
+                                                 ', la variable no ha sido declarada' + '\n')
+        else:
+            expresion.expresion_p.accept(self)
 
-        expresion.expresion_p.accept(self);
 
+    #----------------------------------
 
     def visit_declaracion_funa(self, declaracion_fun):
         self.id_declaracion_fun += 1
@@ -224,7 +241,7 @@ class BuildTablaSimbolosVisitor(object):
                 self.ast += '\t"Sentencia-comp ' + str(id_sentencia_comp) + '" '
                 sentencia_comp.lista_sentencias_p.accept(self)
 
-    def visit_sentencia_expr(self, sentencia_expr):
+    def visit_sentencia_expra(self, sentencia_expr):
         self.id_sentencia_expr += 1
         id_sentencia_expr = self.id_sentencia_expr
         self.ast += '-> "Sentencia-expr ' + str(id_sentencia_expr) + '"' + '\n'
@@ -325,7 +342,7 @@ class BuildTablaSimbolosVisitor(object):
                 sentencia_retorno.expresion_p.accept(self)
 
 
-    def visit_expresion(self, expresion):
+    def visit_expresiona(self, expresion):
         self.id_expresion += 1
         id_expresion = self.id_expresion
         self.ast += '-> "Expresion ' + str(id_expresion) + ': ="' + '\n'

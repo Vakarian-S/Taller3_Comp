@@ -56,4 +56,9 @@ digraph G {
 	"Declaracion-var 5" -> 21
 	22 [label="a"]
 	"Declaracion-var 5" -> 22
+	"Sentencia-comp 2" -> "Expresion 1: ="
+	23 [label="h"]
+	"Expresion 1: =" -> 23
+	24 [label="z"]
+	"Expresion 1: =" -> 24
 }

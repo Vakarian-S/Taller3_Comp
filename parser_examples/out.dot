@@ -1,0 +1,59 @@
+digraph G {
+	"lista-decl 1" -> "Declaracion-var 1"
+	1 [label="VACUO"]
+	"Declaracion-var 1" -> 1
+	2 [label="a"]
+	"Declaracion-var 1" -> 2
+	"lista-decl 1" -> "Declaracion-fun 1"
+	3 [label="ENT"]
+	"Declaracion-fun 1" -> 3
+	4 [label="b"]
+	"Declaracion-fun 1" -> 4
+	"Declaracion-fun 1" -> "Parametros 1"
+	5 [label="ENT"]
+	"Parametros 1" -> 5
+	6 [label="c"]
+	"Parametros 1" -> 6
+	"Declaracion-fun 1" -> "Parametros 2"
+	7 [label="VACUO"]
+	"Parametros 2" -> 7
+	8 [label="d"]
+	"Parametros 2" -> 8
+	"Declaracion-fun 1" -> "Sentencia-comp 1"
+	"Sentencia-comp 1" -> "Declaracion-var 2"
+	9 [label="ENT"]
+	"Declaracion-var 2" -> 9
+	10 [label="a"]
+	"Declaracion-var 2" -> 10
+	"Sentencia-comp 1" -> "Declaracion-var 3"
+	11 [label="VACUO"]
+	"Declaracion-var 3" -> 11
+	12 [label="a"]
+	"Declaracion-var 3" -> 12
+	"lista-decl 1" -> "Declaracion-fun 2"
+	13 [label="ENT"]
+	"Declaracion-fun 2" -> 13
+	14 [label="e"]
+	"Declaracion-fun 2" -> 14
+	"Declaracion-fun 2" -> "Parametros 3"
+	15 [label="VACUO"]
+	"Parametros 3" -> 15
+	16 [label="f"]
+	"Parametros 3" -> 16
+	"Declaracion-fun 2" -> "Parametros 4"
+	17 [label="VACUO"]
+	"Parametros 4" -> 17
+	18 [label="g"]
+	"Parametros 4" -> 18
+	"Declaracion-fun 2" -> "Sentencia-comp 2"
+	"Sentencia-comp 2" -> "Declaracion-var 4"
+	19 [label="ENT"]
+	"Declaracion-var 4" -> 19
+	20 [label="h"]
+	"Declaracion-var 4" -> 20
+	"Sentencia-comp 2" -> "Declaracion-var 5"
+	21 [label="VACUO"]
+	"Declaracion-var 5" -> 21
+	22 [label="a"]
+	"Declaracion-var 5" -> 22
+}

@@ -1,0 +1,67 @@
+digraph G {
+	"lista-decl 1" -> "Declaracion-fun 1"
+	1 [label="ENT"]
+	"Declaracion-fun 1" -> 1
+	2 [label="numberMix"]
+	"Declaracion-fun 1" -> 2
+	3 [label="VACUO"]
+	"Declaracion-fun 1" -> 3
+	"Declaracion-fun 1" -> "Sentencia-comp 1"
+	"Sentencia-comp 1" -> "Sentencia-seleccion 1: SI"
+	"Sentencia-seleccion 1: SI" -> "Expresion-logica 1: !"
+	"Expresion-logica 1: !"-> "Expresion-simple 1: EQ"
+	4 [label="magicNumber"]
+	"Expresion-simple 1: EQ" -> 4
+	"Expresion-simple 1: EQ" -> "Expresion-aditiva 1: -"
+	"Expresion-aditiva 1: -" -> "Expresion-aditiva 2: +"
+	"Expresion-aditiva 2: +" -> "Expresion-aditiva 3: -"
+	"Expresion-aditiva 3: -" -> "Expresion-aditiva 4: +"
+	"Expresion-aditiva 4: +" -> "Expresion-aditiva 5: +"
+	"Expresion-aditiva 5: +" -> "Expresion-aditiva 6: -"
+	"Expresion-aditiva 6: -" -> "Expresion-aditiva 7: -"
+	"Expresion-aditiva 7: -" -> "Expresion-aditiva 8: -"
+	"Expresion-aditiva 8: -" -> "Expresion-aditiva 9: +"
+	"Expresion-aditiva 9: +" -> "Expresion-aditiva 10: +"
+	"Expresion-aditiva 10: +" -> "Expresion-aditiva 11: +"
+	5 [label="1"]
+	"Expresion-aditiva 11: +" -> 5
+	6 [label="2"]
+	"Expresion-aditiva 11: +" -> 6
+	"Expresion-aditiva 10: +" -> "Term 1: ++"
+	7 [label="3"]
+	"Term 1: ++" -> 7
+	8 [label="4"]
+	"Term 1: ++" -> 8
+	9 [label="5"]
+	"Expresion-aditiva 9: +" -> 9
+	10 [label="6"]
+	"Expresion-aditiva 8: -" -> 10
+	11 [label="3"]
+	"Expresion-aditiva 7: -" -> 11
+	"Expresion-aditiva 6: -" -> "Term 2: ++"
+	"Term 2: ++"-> "Term 3: --"
+	12 [label="1"]
+	"Term 3: --" -> 12
+	13 [label="1"]
+	"Term 3: --" -> 13
+	14 [label="2"]
+	"Term 2: ++" -> 14
+	15 [label="7"]
+	"Expresion-aditiva 5: +" -> 15
+	16 [label="2"]
+	"Expresion-aditiva 4: +" -> 16
+	17 [label="5"]
+	"Expresion-aditiva 3: -" -> 17
+	18 [label="1"]
+	"Expresion-aditiva 2: +" -> 18
+	"Expresion-aditiva 1: -" -> "Term 4: --"
+	"Term 4: --"-> "Term 5: ++"
+	19 [label="2"]
+	"Term 5: ++" -> 19
+	20 [label="6"]
+	"Term 5: ++" -> 20
+	21 [label="3"]
+	"Term 4: --" -> 21
+	22 [label="RET"]
+	"Sentencia-seleccion 1: SI" -> 22
+}

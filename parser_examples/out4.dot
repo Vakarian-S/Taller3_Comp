@@ -1,0 +1,57 @@
+digraph G {
+	"lista-decl 1" -> "Declaracion-fun 1"
+	1 [label="ENT"]
+	"Declaracion-fun 1" -> 1
+	2 [label="funcion$1"]
+	"Declaracion-fun 1" -> 2
+	"Declaracion-fun 1" -> "Parametros 1"
+	3 [label="ENT"]
+	"Parametros 1" -> 3
+	4 [label="a"]
+	"Parametros 1" -> 4
+	"Declaracion-fun 1" -> "Sentencia-comp 1"
+	"Sentencia-comp 1" -> "Sentencia-iteracion 1: MIENTRAS" 
+	"Sentencia-iteracion 1: MIENTRAS" -> "Expresion-logica 1: && !"
+	"Expresion-logica 1: && !"-> "Expresion-logica 2: !"
+	"Expresion-logica 2: !"-> "Expresion-simple 1: LT"
+	"Expresion-simple 1: LT" -> "Term 1: ++"
+	5 [label="3"]
+	"Term 1: ++" -> 5
+	6 [label="3"]
+	"Term 1: ++" -> 6
+	7 [label="10"]
+	"Expresion-simple 1: LT" -> 7
+	"Expresion-logica 1: && !"-> "Expresion-simple 2: EQ"
+	"Expresion-simple 2: EQ" -> "Term 2: --"
+	8 [label="9"]
+	"Term 2: --" -> 8
+	9 [label="9"]
+	"Term 2: --" -> 9
+	10 [label="1"]
+	"Expresion-simple 2: EQ" -> 10
+	"Sentencia-iteracion 1: MIENTRAS" -> "Sentencia-comp 2"
+	11 [label="5"]
+	"Sentencia-comp 2" -> 11
+	"lista-decl 1" -> "Declaracion-fun 2"
+	12 [label="VACUO"]
+	"Declaracion-fun 2" -> 12
+	13 [label="funcion$2"]
+	"Declaracion-fun 2" -> 13
+	14 [label="VACUO"]
+	"Declaracion-fun 2" -> 14
+	"lista-decl 1" -> "Declaracion-fun 3"
+	15 [label="ENT"]
+	"Declaracion-fun 3" -> 15
+	16 [label="funcion$3"]
+	"Declaracion-fun 3" -> 16
+	"Declaracion-fun 3" -> "Parametros 2"
+	17 [label="ENT"]
+	"Parametros 2" -> 17
+	18 [label="a"]
+	"Parametros 2" -> 18
+	"Declaracion-fun 3" -> "Parametros 3"
+	19 [label="ENT"]
+	"Parametros 3" -> 19
+	20 [label="b"]
+	"Parametros 3" -> 20
+}

@@ -192,21 +192,10 @@ class BuildTablaSimbolosVisitor(object):
                             if var_symbol is None:
                                 self.errors_tabla_simbolos.write('error en llamado a variable: '
                                                                  + str(var_name) +
-                                                                 ', la variable no ha sido declarada' + '\n')
+                                                             ', la variable no ha sido declarada' + '\n')
                     else:
                         stmt.accept(self)
 
-
-        if sentencia_comp.lista_sentencias_p is not None:
-            if isinstance(sentencia_comp.lista_sentencias_p, list):
-                for stmt in sentencia_comp.lista_sentencias_p:
-                    if stmt is not None:
-                        if isinstance(stmt, str):
-                            print('nothing')
-                        else:
-                            stmt.accept(self)
-            else:
-                sentencia_comp.lista_sentencias_p.accept(self)
 
     def visit_sentencia_expr(self, sentencia_expr):
         if sentencia_expr.expresion_p is not None:

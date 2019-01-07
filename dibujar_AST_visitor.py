@@ -196,11 +196,26 @@ class Visitor(object):
         id_sentencia_iteracion = self.id_sentencia_iteracion
         self.ast += '-> "Sentencia-iteracion ' + str(id_sentencia_iteracion) + ': MIENTRAS" ' + '\n'
         if sentencia_iteracion.expresion_p is not None:
-            self.ast += '\t"Sentencia-iteracion ' + str(id_sentencia_iteracion) + ': MIENTRAS" '
-            sentencia_iteracion.expresion_p.accept(self)
+            if isinstance(sentencia_iteracion.expresion_p, str):
+                self.id_terminales += 1
+                self.ast += '\t' + str(
+                    self.id_terminales) + ' [label="' + str(sentencia_iteracion.expresion_p) + '"]\n'
+                self.ast += '\t"Sentencia-iteracion ' + str(id_sentencia_iteracion) + ': MIENTRAS" -> ' + str(
+                    self.id_terminales) + '\n'
+            else:
+                self.ast += '\t"Sentencia-iteracion ' + str(id_sentencia_iteracion) + ': MIENTRAS" '
+                sentencia_iteracion.expresion_p.accept(self)
+
         if sentencia_iteracion.sentencia_p is not None:
-            self.ast += '\t"Sentencia-iteracion ' + str(id_sentencia_iteracion) + ': MIENTRAS" '
-            sentencia_iteracion.sentencia_p.accept(self)
+            if isinstance(sentencia_iteracion.sentencia_p, str):
+                self.id_terminales += 1
+                self.ast += '\t' + str(
+                    self.id_terminales) + ' [label="' + str(sentencia_iteracion.sentencia_p) + '"]\n'
+                self.ast += '\t"Sentencia-iteracion ' + str(id_sentencia_iteracion) + ': MIENTRAS" -> ' + str(
+                    self.id_terminales) + '\n'
+            else:
+                self.ast += '\t"Sentencia-iteracion ' + str(id_sentencia_iteracion) + ': MIENTRAS" '
+                sentencia_iteracion.sentencia_p.accept(self)
 
     def visit_sentencia_iteracion2(self, sentencia_iteracion):
         self.id_sentencia_iteracion += 1
@@ -234,11 +249,6 @@ class Visitor(object):
                 self.ast += '\t' + str(self.id_terminales) + ' [label="' + expresion.var_p + '"]\n'
                 self.ast += '\t"Expresion ' + str(id_expresion) + ': =" -> ' + str(self.id_terminales) + '\n'
             else:
-                if expresion.var_p.expresion_p is None:
-                    self.id_terminales += 1
-                    self.ast += '\t' + str(self.id_terminales) + ' [label="' + expresion.var_p.ID_t + '"]\n'
-                    self.ast += '\t"Expresion ' + str(id_expresion) + ': =" -> ' + str(self.id_terminales) + '\n'
-                else:
                     self.ast += '\t"Expresion ' + str(id_expresion) + ': =" '
                     expresion.var_p.accept(self)
 
@@ -253,16 +263,16 @@ class Visitor(object):
     def visit_var(self, var):
         self.id_var += 1
         id_var = self.id_var
-        self.ast += '-> "Var ' + str(id_var) + ': ="'  '\n'
+        self.ast += '-> "Var ' + str(id_var) + ':"'  '\n'
         self.id_terminales += 1
         self.ast += '\t' + str(self.id_terminales) + ' [label="' + var.ID_t + '"]\n'
-        self.ast += '\t"Var ' + str(id_var) + ': =" -> ' + str(self.id_terminales) + '\n'
+        self.ast += '\t"Var ' + str(id_var) + ':" -> ' + str(self.id_terminales) + '\n'
         if isinstance(var.expresion_p, str):
             self.id_terminales += 1
             self.ast += '\t' + str(self.id_terminales) + ' [label="' + var.expresion_p + '"]\n'
-            self.ast += '\t"Var ' + str(id_var) + ': =" -> ' + str(self.id_terminales) + '\n'
+            self.ast += '\t"Var ' + str(id_var) + ':" -> ' + str(self.id_terminales) + '\n'
         else:
-            self.ast += '\t"Var ' + str(id_var) + ': =" '
+            self.ast += '\t"Var ' + str(id_var) + ':" '
             var.expresion_p.accept(self)
 
 

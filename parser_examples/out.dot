@@ -19,96 +19,222 @@ digraph G {
 	"Parametros 2" -> 7
 	8 [label="d"]
 	"Parametros 2" -> 8
+	"Declaracion-fun 1" -> "Parametros 3"
+	9 [label="ENT"]
+	"Parametros 3" -> 9
+	10 [label="d"]
+	"Parametros 3" -> 10
 	"Declaracion-fun 1" -> "Sentencia-comp 1"
 	"Sentencia-comp 1" -> "Declaracion-var 2"
-	9 [label="ENT"]
-	"Declaracion-var 2" -> 9
-	10 [label="a"]
-	"Declaracion-var 2" -> 10
-	"Sentencia-comp 1" -> "Declaracion-var 3"
-	11 [label="VACUO"]
-	"Declaracion-var 3" -> 11
+	11 [label="ENT"]
+	"Declaracion-var 2" -> 11
 	12 [label="a"]
-	"Declaracion-var 3" -> 12
+	"Declaracion-var 2" -> 12
+	"Sentencia-comp 1" -> "Declaracion-var 3"
+	13 [label="VACUO"]
+	"Declaracion-var 3" -> 13
+	14 [label="a"]
+	"Declaracion-var 3" -> 14
 	"lista-decl 1" -> "Declaracion-fun 2"
-	13 [label="ENT"]
-	"Declaracion-fun 2" -> 13
-	14 [label="e"]
-	"Declaracion-fun 2" -> 14
-	"Declaracion-fun 2" -> "Parametros 3"
-	15 [label="VACUO"]
-	"Parametros 3" -> 15
-	16 [label="f"]
-	"Parametros 3" -> 16
+	15 [label="ENT"]
+	"Declaracion-fun 2" -> 15
+	16 [label="e"]
+	"Declaracion-fun 2" -> 16
 	"Declaracion-fun 2" -> "Parametros 4"
 	17 [label="VACUO"]
 	"Parametros 4" -> 17
-	18 [label="g"]
+	18 [label="f"]
 	"Parametros 4" -> 18
+	"Declaracion-fun 2" -> "Parametros 5"
+	19 [label="VACUO"]
+	"Parametros 5" -> 19
+	20 [label="g"]
+	"Parametros 5" -> 20
 	"Declaracion-fun 2" -> "Sentencia-comp 2"
 	"Sentencia-comp 2" -> "Declaracion-var 4"
-	19 [label="ENT"]
-	"Declaracion-var 4" -> 19
-	20 [label="h"]
-	"Declaracion-var 4" -> 20
+	21 [label="ENT"]
+	"Declaracion-var 4" -> 21
+	22 [label="h"]
+	"Declaracion-var 4" -> 22
 	"Sentencia-comp 2" -> "Declaracion-var 5"
-	21 [label="VACUO"]
-	"Declaracion-var 5" -> 21
-	22 [label="a"]
-	"Declaracion-var 5" -> 22
+	23 [label="VACUO"]
+	"Declaracion-var 5" -> 23
+	24 [label="a"]
+	"Declaracion-var 5" -> 24
 	"Sentencia-comp 2" -> "Expresion 1: ="
-	23 [label="h"]
-	"Expresion 1: =" -> 23
-	24 [label="2"]
-	"Expresion 1: =" -> 24
+	25 [label="h"]
+	"Expresion 1: =" -> 25
+	26 [label="2"]
+	"Expresion 1: =" -> 26
 	"Sentencia-comp 2" -> "Expresion 2: ="
-	25 [label="a"]
-	"Expresion 2: =" -> 25
+	27 [label="a"]
+	"Expresion 2: =" -> 27
 	"Expresion 2: =" -> "Expresion 3: ="
-	26 [label="h"]
-	"Expresion 3: =" -> 26
-	27 [label="5"]
-	"Expresion 3: =" -> 27
-	"Sentencia-comp 2" -> "Expresion-aditiva 1: +"
 	28 [label="h"]
-	"Expresion-aditiva 1: +" -> 28
-	29 [label="a"]
-	"Expresion-aditiva 1: +" -> 29
+	"Expresion 3: =" -> 28
+	29 [label="5"]
+	"Expresion 3: =" -> 29
+	"Sentencia-comp 2" -> "Expresion-aditiva 1: +"
+	30 [label="h"]
+	"Expresion-aditiva 1: +" -> 30
+	31 [label="a"]
+	"Expresion-aditiva 1: +" -> 31
 	"lista-decl 1" -> "Declaracion-fun 3"
-	30 [label="ENT"]
-	"Declaracion-fun 3" -> 30
-	31 [label="e"]
-	"Declaracion-fun 3" -> 31
-	"Declaracion-fun 3" -> "Parametros 5"
-	32 [label="VACUO"]
-	"Parametros 5" -> 32
-	33 [label="f"]
-	"Parametros 5" -> 33
+	32 [label="ENT"]
+	"Declaracion-fun 3" -> 32
+	33 [label="e"]
+	"Declaracion-fun 3" -> 33
 	"Declaracion-fun 3" -> "Parametros 6"
-	34 [label="ENT"]
+	34 [label="VACUO"]
 	"Parametros 6" -> 34
-	35 [label="g"]
+	35 [label="f"]
 	"Parametros 6" -> 35
+	"Declaracion-fun 3" -> "Parametros 7"
+	36 [label="ENT"]
+	"Parametros 7" -> 36
+	37 [label="g"]
+	"Parametros 7" -> 37
 	"Declaracion-fun 3" -> "Sentencia-comp 3"
-	36 [label="z"]
-	"Sentencia-comp 3" -> 36
-	37 [label="1"]
-	"Sentencia-comp 3" -> 37
-	38 [label="ret"]
+	38 [label="z"]
 	"Sentencia-comp 3" -> 38
+	39 [label="1"]
+	"Sentencia-comp 3" -> 39
+	40 [label="ret"]
+	"Sentencia-comp 3" -> 40
 	"lista-decl 1" -> "Declaracion-fun 4"
-	39 [label="ENT"]
-	"Declaracion-fun 4" -> 39
-	40 [label="e"]
-	"Declaracion-fun 4" -> 40
-	"Declaracion-fun 4" -> "Parametros 7"
-	41 [label="VACUO"]
-	"Parametros 7" -> 41
-	42 [label="f"]
-	"Parametros 7" -> 42
-	"Declaracion-fun 4" -> "Parametros 8"
-	43 [label="ENT"]
-	"Parametros 8" -> 43
-	44 [label="g"]
-	"Parametros 8" -> 44
+	41 [label="ENT"]
+	"Declaracion-fun 4" -> 41
+	42 [label="e"]
+	"Declaracion-fun 4" -> 42
+	43 [label="VACUO"]
+	"Declaracion-fun 4" -> 43
+	"Declaracion-fun 4" -> "Sentencia-comp 4"
+	"Sentencia-comp 4" -> "Declaracion-var 6"
+	44 [label="ENT"]
+	"Declaracion-var 6" -> 44
+	45 [label="ida"]
+	"Declaracion-var 6" -> 45
+	"Sentencia-comp 4" -> "Declaracion-var 7"
+	46 [label="ENT"]
+	"Declaracion-var 7" -> 46
+	47 [label="idb"]
+	"Declaracion-var 7" -> 47
+	"Sentencia-comp 4" -> "Sentencia-seleccion 1: SI SINO"
+	"Sentencia-seleccion 1: SI SINO" -> "Expresion 4: ="
+	48 [label="ida"]
+	"Expresion 4: =" -> 48
+	49 [label="idb"]
+	"Expresion 4: =" -> 49
+	"Sentencia-seleccion 1: SI SINO" -> "Sentencia-comp 5"
+	"Sentencia-comp 5" -> "Expresion 5: ="
+	50 [label="ida"]
+	"Expresion 5: =" -> 50
+	"Expresion 5: =" -> "Expresion-aditiva 2: +"
+	51 [label="ida"]
+	"Expresion-aditiva 2: +" -> 51
+	52 [label="4"]
+	"Expresion-aditiva 2: +" -> 52
+	"Sentencia-seleccion 1: SI SINO" -> "Sentencia-comp 6"
+	"Sentencia-comp 6" -> "Expresion 6: ="
+	53 [label="ida"]
+	"Expresion 6: =" -> 53
+	"Expresion 6: =" -> "Expresion-aditiva 3: +"
+	54 [label="idb"]
+	"Expresion-aditiva 3: +" -> 54
+	55 [label="idc"]
+	"Expresion-aditiva 3: +" -> 55
+	"Sentencia-comp 4" -> "Sentencia-iteracion 1: MIENTRAS" 
+	56 [label="1"]
+	"Sentencia-iteracion 1: MIENTRAS" -> 56
+	57 [label="ida"]
+	"Sentencia-iteracion 1: MIENTRAS" -> 57
+	"lista-decl 1" -> "Declaracion-fun 5"
+	58 [label="ENT"]
+	"Declaracion-fun 5" -> 58
+	59 [label="e"]
+	"Declaracion-fun 5" -> 59
+	60 [label="VACUO"]
+	"Declaracion-fun 5" -> 60
+	"Declaracion-fun 5" -> "Sentencia-comp 7"
+	"Sentencia-comp 7" -> "Declaracion-var 8"
+	61 [label="ENT"]
+	"Declaracion-var 8" -> 61
+	62 [label="idc"]
+	"Declaracion-var 8" -> 62
+	"Sentencia-comp 7" -> "Sentencia-iteracion 2: REP"
+	"Sentencia-iteracion 2: REP" -> "Sentencia-comp 8"
+	"Sentencia-comp 8" -> "Declaracion-var 9"
+	63 [label="ENT"]
+	"Declaracion-var 9" -> 63
+	64 [label="idd"]
+	"Declaracion-var 9" -> 64
+	"Sentencia-comp 8" -> "Expresion 7: ="
+	65 [label="idc"]
+	"Expresion 7: =" -> 65
+	"Expresion 7: =" -> "Expresion-aditiva 4: +"
+	66 [label="idd"]
+	"Expresion-aditiva 4: +" -> 66
+	67 [label="ide"]
+	"Expresion-aditiva 4: +" -> 67
+	"Sentencia-comp 7" -> "Sentencia-retorno 1: RET"
+	68 [label="idd"]
+	"Sentencia-retorno 1: RET" -> 68
+	"Sentencia-comp 7" -> "Sentencia-retorno 2: RET"
+	69 [label="ide"]
+	"Sentencia-retorno 2: RET" -> 69
+	"lista-decl 1" -> "Declaracion-fun 6"
+	70 [label="VACUO"]
+	"Declaracion-fun 6" -> 70
+	71 [label="g"]
+	"Declaracion-fun 6" -> 71
+	"Declaracion-fun 6" -> "Parametros 8"
+	72 [label="ENT"]
+	"Parametros 8" -> 72
+	73 [label="i$1"]
+	"Parametros 8" -> 73
+	"Declaracion-fun 6" -> "Sentencia-comp 9"
+	"Sentencia-comp 9" -> "Declaracion-var 10"
+	74 [label="VACUO"]
+	"Declaracion-var 10" -> 74
+	75 [label="abc"]
+	"Declaracion-var 10" -> 75
+	"Sentencia-comp 9" -> "Expresion 8: ="
+	"Expresion 8: =" -> "Var 1:"
+	76 [label="i$2"]
+	"Var 1:" -> 76
+	77 [label="5"]
+	"Var 1:" -> 77
+	78 [label="5"]
+	"Expresion 8: =" -> 78
+	"Sentencia-comp 9" -> "Expresion-logica 1: !"
+	79 [label="i$5"]
+	"Expresion-logica 1: !" -> 79
+	"Sentencia-comp 9" -> "Expresion-logica 2: !"
+	80 [label="2"]
+	"Expresion-logica 2: !" -> 80
+	"Sentencia-comp 9" -> "Expresion-negada 1: !"
+	"Expresion-negada 1: !" -> "Expresion-logica 3: &&"
+	"Expresion-logica 3: &&"-> "Expresion-logica 4: !"
+	81 [label="i$7"]
+	"Expresion-logica 4: !" -> 81
+	82 [label="i$8"]
+	"Expresion-logica 3: &&" -> 82
+	"Sentencia-comp 9" -> "Expresion-logica 5: && !"
+	83 [label="5"]
+	"Expresion-logica 5: && !" -> 83
+	"Expresion-logica 5: && !"-> "Expresion-aditiva 5: +"
+	84 [label="5"]
+	"Expresion-aditiva 5: +" -> 84
+	85 [label="i$10"]
+	"Expresion-aditiva 5: +" -> 85
+	"Sentencia-comp 9" -> "Expresion-simple 1: LT"
+	86 [label="5"]
+	"Expresion-simple 1: LT" -> 86
+	87 [label="i$100"]
+	"Expresion-simple 1: LT" -> 87
+	"Sentencia-comp 9" -> "Expresion-simple 2: EQ"
+	88 [label="i$50"]
+	"Expresion-simple 2: EQ" -> 88
+	89 [label="100"]
+	"Expresion-simple 2: EQ" -> 89
 }

@@ -1,3 +1,14 @@
+error en declaracion de parametros: ENT d, ya fue declarado anteriormente
 error en declaracion de variable: VACUO a, ya fue declarada anteriormente
 error en llamado a variable: z, la variable no ha sido declarada
+error en llamado a variable: idc, la variable no ha sido declarada
 error en declaracion de funcion: e, ya fue declarada anteriormente
+error en llamado a variable: ide, la variable no ha sido declarada
+error en llamado a variable: ide, la variable no ha sido declarada
+error en llamado a variable: i$2, la variable no ha sido declarada
+error en llamado a variable: i$5, la variable no ha sido declarada
+error en llamado a variable: i$7, la variable no ha sido declarada
+error en llamado a variable: i$8, la variable no ha sido declarada
+error en llamado a variable: i$10, la variable no ha sido declarada
+error en llamado a variable: i$100, la variable no ha sido declarada
+error en llamado a variable: i$50, la variable no ha sido declarada

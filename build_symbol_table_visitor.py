@@ -35,21 +35,21 @@ class BuildTablaSimbolosVisitor(object):
         #--------- Creacion input e output base----------
 
         proc_input = 'input'
-        proc_output = 'output'
-        proc_input_symbol = ProcedureSymbol(proc_input)
-        proc_output_symbol = ProcedureSymbol(proc_output)
+        input_type_name = 'ENT'
+        input_type_symbol = self.current_scope.lookup(input_type_name)
+        proc_input_symbol = ProcedureSymbol(proc_input, type=input_type_symbol);
+        proc_input_symbol.params = 'VACUO'
         self.current_scope.insert(proc_input_symbol)
-        self.current_scope.insert(proc_output_symbol)
-        param_type = self.current_scope.lookup('VACUO')
-        param_name = 'vacio'
-        var_symbol = VarSymbol(param_name, param_type)
-        proc_input_symbol.params.append(var_symbol)
-
+        
+        proc_output = 'output'
+        output_type_name = 'VACUO'
+        output_type_symbol = self.current_scope.lookup(output_type_name)
+        proc_output_symbol = ProcedureSymbol(proc_output, type=output_type_symbol);
         param_type = self.current_scope.lookup('ENT')
         param_name = 'x'
         var_symbol = VarSymbol(param_name, param_type)
         proc_output_symbol.params.append(var_symbol)
-
+        self.current_scope.insert(proc_output_symbol)
 
         # Crear el nodo raiz y agregarlo.
         self.nodo = NodoSymbolTable()
@@ -102,33 +102,40 @@ class BuildTablaSimbolosVisitor(object):
         type_symbol = self.current_scope.lookup(type_name)
         error_var_nombre = self.current_scope.lookup(proc_name,current_scope_only=True)
         if error_var_nombre:
-            # ------------ Crear una lista con los parametros a usar --------
-            tipos_params = []
-            if declaracion_fun.parametros_p is not None:
-                if isinstance(declaracion_fun.parametros_p, list):
-                    params = declaracion_fun.parametros_p
-                else:
-                    params = [declaracion_fun.parametros_p]
-                for param in params:
-                    if param is not None:
-                        tipos_params.append(param.def_tipo_p)
-
-            # -- Revisar cada parametro
-            for funcion in error_var_nombre:
-
-                # ------------ Checkear si es una sobrecarga o un duplicado -------
-
-                # -- Checkeo por cantidad de parametros
-                if (len(funcion.params) == len(tipos_params)):
-                    # -- Checkeo por tipos de parametro
-                    match = True
-                    for tipo in range(len(funcion.params)):
-                        if str(funcion.params[tipo].type) != tipos_params[tipo]:
-                            match = False
-                            break
-                    if match == True:
+            # - Caso especial parametro VACUO --#
+            if isinstance(declaracion_fun.parametros_p,str):
+                for funcion in error_var_nombre:
+                    if funcion.params == 'VACUO':
                         self.errors_tabla_simbolos.write('error en declaracion de funcion: '
-                                                         + str(proc_name) + ', ya fue declarada anteriormente' + '\n')
+                                            + str(proc_name) + ', ya fue declarada anteriormente' + '\n')
+            else:
+                # ------------ Crear una lista con los parametros a usar --------
+                tipos_params = []
+                if declaracion_fun.parametros_p is not None:
+                    if isinstance(declaracion_fun.parametros_p, list):
+                        params = declaracion_fun.parametros_p
+                    else:
+                        params = [declaracion_fun.parametros_p]
+                    for param in params:
+                        if param is not None:
+                            tipos_params.append(param.def_tipo_p)
+
+                # -- Revisar cada parametro
+                for funcion in error_var_nombre:
+
+                    # ------------ Checkear si es una sobrecarga o un duplicado -------
+
+                    # -- Checkeo por cantidad de parametros
+                    if (len(funcion.params) == len(tipos_params)):
+                        # -- Checkeo por tipos de parametro
+                        match = True
+                        for tipo in range(len(funcion.params)):
+                            if str(funcion.params[tipo].type) != tipos_params[tipo]:
+                                match = False
+                                break
+                        if match == True:
+                            self.errors_tabla_simbolos.write('error en declaracion de funcion: '
+                                                             + str(proc_name) + ', ya fue declarada anteriormente' + '\n')
 
         proc_symbol = ProcedureSymbol(proc_name, type=type_symbol)
         self.current_scope.append(proc_symbol)
@@ -145,17 +152,27 @@ class BuildTablaSimbolosVisitor(object):
         # Insert parameters into the procedure scope
 
         if declaracion_fun.parametros_p is not None:
-            if isinstance(declaracion_fun.parametros_p, list):
-                params = declaracion_fun.parametros_p
+            if isinstance(declaracion_fun.parametros_p, str):
+                proc_symbol.params = 'VACUO'
             else:
-                params = [declaracion_fun.parametros_p]
-            for param in params:
-                if param is not None:
-                    param_type = self.current_scope.lookup(param.def_tipo_p)
-                    param_name = param.ID_t
-                    var_symbol = VarSymbol(param_name, param_type)
-                    self.current_scope.insert(var_symbol)
-                    proc_symbol.params.append(var_symbol)
+                if isinstance(declaracion_fun.parametros_p, list):
+                    params = declaracion_fun.parametros_p
+                else:
+                    params = [declaracion_fun.parametros_p]
+                for param in params:
+                    if param is not None:
+                        param_type = self.current_scope.lookup(param.def_tipo_p)
+                        param_name = param.ID_t
+                        var_symbol = VarSymbol(param_name, param_type)
+                        error_symbol = self.current_scope.lookup(name=param_name,current_scope_only=True)
+                        if error_symbol:
+                            self.errors_tabla_simbolos.write('error en declaracion de parametros: '
+                                                             + str(param_type) +  ' ' + str(param_name)
+                            + ', ya fue declarado anteriormente' + '\n')
+                        else:
+                            self.current_scope.insert(var_symbol)
+                            proc_symbol.params.append(var_symbol)
+
 
         declaracion_fun.sentencia_comp_p.accept(self)
 
@@ -186,7 +203,7 @@ class BuildTablaSimbolosVisitor(object):
                         # --- Un string o es un numero, RET, o un id
                         numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
                         retRegex = re.compile(r'(?i:ret)')
-                        if not (numRegex.search(stmt) or retRegex.search(stmt)):
+                        if not (numRegex.match(stmt) or retRegex.match(stmt)):
                             var_name = stmt
                             var_symbol = self.current_scope.lookup(var_name)
                             if var_symbol is None:
@@ -200,22 +217,32 @@ class BuildTablaSimbolosVisitor(object):
     def visit_sentencia_expr(self, sentencia_expr):
         if sentencia_expr.expresion_p is not None:
             if isinstance(sentencia_expr.expresion_p, str):
-                print('nothing')
+                numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
+                if not (numRegex.match(sentencia_expr.expresion_p)):
+                    var_name2 = sentencia_expr.expresion_p
+                    var_symbol2 = self.current_scope.lookup(var_name2)
+                    if var_symbol2 is None:
+                        self.errors_tabla_simbolos.write('error en llamado a variable: '
+                                                         + str(var_name2) +
+                                                         ', la variable no ha sido declarada' + '\n')
             else:
                 sentencia_expr.expresion_p.accept(self)
 
 
     def visit_expresion(self, expresion):
-        var_name = expresion.var_p
+        if expresion.var_p is not None:
+            if isinstance(expresion.var_p, str):
+                var_name = expresion.var_p
+            else:
+                var_name = expresion.var_p.ID_t
         var_symbol = self.current_scope.lookup(var_name)
         if var_symbol is None:
             self.errors_tabla_simbolos.write('error en llamado a variable: '
                                              + str(var_name) +
                                              ', la variable no ha sido declarada' + '\n')
-
         if isinstance(expresion.expresion_p, str):
             numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
-            if not (numRegex.search(expresion.expresion_p)):
+            if not (numRegex.match(expresion.expresion_p)):
                 var_name2 = expresion.expresion_p
                 var_symbol2 = self.current_scope.lookup(var_name2)
                 if var_symbol2 is None:
@@ -228,7 +255,7 @@ class BuildTablaSimbolosVisitor(object):
     def visit_expresion_aditiva(self, expresion_aditiva):
         if isinstance(expresion_aditiva.expresion_aditiva_p, str):
             numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
-            if not (numRegex.search(expresion_aditiva.expresion_aditiva_p)):
+            if not (numRegex.match(expresion_aditiva.expresion_aditiva_p)):
                 var_name2 = expresion_aditiva.expresion_aditiva_p
                 var_symbol2 = self.current_scope.lookup(var_name2)
                 if var_symbol2 is None:
@@ -240,7 +267,7 @@ class BuildTablaSimbolosVisitor(object):
 
         if isinstance(expresion_aditiva.term_p, str):
             numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
-            if not (numRegex.search(expresion_aditiva.term_p)):
+            if not (numRegex.match(expresion_aditiva.term_p)):
                 var_name2 = expresion_aditiva.term_p
                 var_symbol2 = self.current_scope.lookup(var_name2)
                 if var_symbol2 is None:
@@ -249,6 +276,171 @@ class BuildTablaSimbolosVisitor(object):
                                                      ', la variable no ha sido declarada' + '\n')
         else:
             expresion_aditiva.term_p.accept(self)
+
+
+
+    def visit_sentencia_seleccion(self, sentencia_seleccion):
+        if isinstance(sentencia_seleccion.expresion_p, str):
+            numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
+            if not (numRegex.match(sentencia_seleccion.expresion_p)):
+                var_name2 = sentencia_seleccion.expresion_p
+                var_symbol2 = self.current_scope.lookup(var_name2)
+                if var_symbol2 is None:
+                    self.errors_tabla_simbolos.write('error en llamado a variable: '
+                                                     + str(var_name2) +
+                                                     ', la variable no ha sido declarada' + '\n')
+        else:
+            sentencia_seleccion.expresion_p.accept(self)
+
+        if isinstance(sentencia_seleccion.sentencia_p, str):
+            # --- Un string o es un numero, RET, o un id
+            numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
+            retRegex = re.compile(r'(?i:ret)')
+            if not (numRegex.match(sentencia_seleccion.sentencia_p) or retRegex.match(sentencia_seleccion.sentencia_p)):
+                var_name = sentencia_seleccion.sentencia_p
+                var_symbol = self.current_scope.lookup(var_name)
+                if var_symbol is None:
+                    self.errors_tabla_simbolos.write('error en llamado a variable: '
+                                                     + str(var_name) +
+                                                     ', la variable no ha sido declarada' + '\n')
+        else:
+            sentencia_seleccion.sentencia_p.accept(self)
+
+        if sentencia_seleccion.sentencia2_p is not None:
+            if isinstance(sentencia_seleccion.sentencia2_p, str):
+                # --- Un string o es un numero, RET, o un id
+                numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
+                retRegex = re.compile(r'(?i:ret)')
+                if not (numRegex.match(sentencia_seleccion.sentencia2_p) or retRegex.match(
+                        sentencia_seleccion.sentencia2_p)):
+                    var_name = sentencia_seleccion.sentencia2_p
+                    var_symbol = self.current_scope.lookup(var_name)
+                    if var_symbol is None:
+                        self.errors_tabla_simbolos.write('error en llamado a variable: '
+                                                         + str(var_name) +
+                                                         ', la variable no ha sido declarada' + '\n')
+            else:
+                sentencia_seleccion.sentencia2_p.accept(self)
+
+    def visit_sentencia_iteracion1(self, sentencia_iteracion):
+        if sentencia_iteracion.expresion_p is not None:
+            if isinstance(sentencia_iteracion.expresion_p, str):
+                numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
+                if not (numRegex.match(sentencia_iteracion.expresion_p)):
+                    var_name2 = sentencia_iteracion.expresion_p
+                    var_symbol2 = self.current_scope.lookup(var_name2)
+                    if var_symbol2 is None:
+                        self.errors_tabla_simbolos.write('error en llamado a variable: '
+                                                         + str(var_name2) +
+                                                         ', la variable no ha sido declarada' + '\n')
+            else:
+                sentencia_iteracion.expresion_p.accept(self)
+
+        if sentencia_iteracion.sentencia_p is not None:
+            if isinstance(sentencia_iteracion.sentencia_p, str):
+                # --- Un string o es un numero, RET, o un id
+                numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
+                retRegex = re.compile(r'(?i:ret)')
+                if not (numRegex.match(sentencia_iteracion.sentencia_p) or retRegex.match(
+                        sentencia_iteracion.sentencia_p)):
+                    var_name = sentencia_iteracion.sentencia_p
+                    var_symbol = self.current_scope.lookup(var_name)
+                    if var_symbol is None:
+                        self.errors_tabla_simbolos.write('error en llamado a variable: '
+                                                         + str(var_name) +
+                                                         ', la variable no ha sido declarada' + '\n')
+            else:
+                sentencia_iteracion.sentencia_p.accept(self)
+
+    def visit_sentencia_iteracion2(self, sentencia_iteracion):
+        if sentencia_iteracion.sentencia_comp_p is not None:
+            sentencia_iteracion.sentencia_comp_p.accept(self)
+
+
+    def visit_sentencia_retorno(self, sentencia_retorno):
+        if sentencia_retorno.expresion_p is not None:
+            if isinstance(sentencia_retorno.expresion_p, str):
+                numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
+                if not (numRegex.match(sentencia_retorno.expresion_p)):
+                    var_name2 = sentencia_retorno.expresion_p
+                    var_symbol2 = self.current_scope.lookup(var_name2)
+                    if var_symbol2 is None:
+                        self.errors_tabla_simbolos.write('error en llamado a variable: '
+                                                         + str(var_name2) +
+                                                         ', la variable no ha sido declarada' + '\n')
+            else:
+                sentencia_retorno.expresion_p.accept(self)
+
+
+    def visit_expresion_negada(self, expresion_negada):
+        print('here')
+        if isinstance(expresion_negada.expresion_logica_p, str):
+            print('here2')
+            numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
+            if not (numRegex.match(expresion_negada.expresion_logica_p)):
+                var_name2 = expresion_negada.expresion_logica_p
+                var_symbol2 = self.current_scope.lookup(var_name2)
+                if var_symbol2 is None:
+                    self.errors_tabla_simbolos.write('error en llamado a variable: '
+                                                     + str(var_name2) +
+                                                     ', la variable no ha sido declarada' + '\n')
+        else:
+            expresion_negada.expresion_logica_p.accept(self)
+
+    def visit_expresion_logica(self, expresion_logica):
+        if expresion_logica.expresion_logica_p is not None:
+            if isinstance(expresion_logica.expresion_logica_p, str):
+                numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
+                if not (numRegex.match(expresion_logica.expresion_logica_p)):
+                    var_name = expresion_logica.expresion_logica_p
+                    var_symbol = self.current_scope.lookup(var_name)
+                    if var_symbol is None:
+                        self.errors_tabla_simbolos.write('error en llamado a variable: '
+                                                         + str(var_name) +
+                                                         ', la variable no ha sido declarada' + '\n')
+            else:
+                expresion_logica.expresion_logica_p.accept(self)
+
+        if expresion_logica.expresion_simple_p is not None:
+            if isinstance(expresion_logica.expresion_simple_p, str):
+                numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
+                if not (numRegex.match(expresion_logica.expresion_simple_p)):
+
+                    var_name = expresion_logica.expresion_simple_p
+                    var_symbol = self.current_scope.lookup(var_name)
+                    if var_symbol is None:
+                        self.errors_tabla_simbolos.write('error en llamado a variable: '
+                                                         + str(var_name) +
+                                                         ', la variable no ha sido declarada' + '\n')
+            else:
+                expresion_logica.expresion_simple_p.accept(self)
+
+
+
+    def visit_expresion_simple(self, expresion_simple):
+        if isinstance(expresion_simple.expresion_simple_p, str):
+            numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
+            if not (numRegex.match(expresion_simple.expresion_simple_p)):
+                var_name = expresion_simple.expresion_simple_p
+                var_symbol = self.current_scope.lookup(var_name)
+                if var_symbol is None:
+                    self.errors_tabla_simbolos.write('error en llamado a variable: '
+                                                     + str(var_name) +
+                                                     ', la variable no ha sido declarada' + '\n')
+        else:
+            expresion_simple.expresion_simple_p.accept(self)
+
+        if isinstance(expresion_simple.expresion_aditiva_p, str):
+            numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
+            if not (numRegex.match(expresion_simple.expresion_aditiva_p)):
+                var_name = expresion_simple.expresion_aditiva_p
+                var_symbol = self.current_scope.lookup(var_name)
+                if var_symbol is None:
+                    self.errors_tabla_simbolos.write('error en llamado a variable: '
+                                                     + str(var_name) +
+                                                     ', la variable no ha sido declarada' + '\n')
+        else:
+            expresion_simple.expresion_aditiva_p.accept(self)
 
     #----------------------------------
 
@@ -339,7 +531,7 @@ class BuildTablaSimbolosVisitor(object):
                 self.ast += '\t"Sentencia-expr ' + str(id_sentencia_expr) + '" '
                 sentencia_expr.expresion_p.accept(self)
 
-    def visit_sentencia_seleccion(self, sentencia_seleccion):
+    def visit_sentencia_selecciona(self, sentencia_seleccion):
         self.id_sentencia_seleccion += 1
         id_sentencia_seleccion = self.id_sentencia_seleccion
         if sentencia_seleccion.sentencia2_p is not None:
@@ -394,7 +586,7 @@ class BuildTablaSimbolosVisitor(object):
                     sentencia_seleccion.sentencia_p.accept(self)
 
 
-    def visit_sentencia_iteracion1(self, sentencia_iteracion):
+    def visit_sentencia_iteracion1a(self, sentencia_iteracion):
         self.id_sentencia_iteracion += 1
         id_sentencia_iteracion = self.id_sentencia_iteracion
         self.ast += '-> "Sentencia-iteracion ' + str(id_sentencia_iteracion) + ': MIENTRAS" ' + '\n'
@@ -405,7 +597,7 @@ class BuildTablaSimbolosVisitor(object):
             self.ast += '\t"Sentencia-iteracion ' + str(id_sentencia_iteracion) + ': MIENTRAS" '
             sentencia_iteracion.sentencia_p.accept(self)
 
-    def visit_sentencia_iteracion2(self, sentencia_iteracion):
+    def visit_sentencia_iteracion2a(self, sentencia_iteracion):
         self.id_sentencia_iteracion += 1
         id_sentencia_iteracion = self.id_sentencia_iteracion
         self.ast += '-> "Sentencia-iteracion ' + str(id_sentencia_iteracion) + ': REP"' + '\n'
@@ -413,7 +605,7 @@ class BuildTablaSimbolosVisitor(object):
             self.ast += '\t"Sentencia-iteracion ' + str(id_sentencia_iteracion) + ': REP" '
             sentencia_iteracion.sentencia_comp_p.accept(self)
 
-    def visit_sentencia_retorno(self, sentencia_retorno):
+    def visit_sentencia_retornoa(self, sentencia_retorno):
         self.id_sentencia_retorno += 1
         id_sentencia_retorno = self.id_sentencia_retorno
         self.ast += '-> "Sentencia-retorno ' + str(id_sentencia_retorno) + ': RET"' + '\n'
@@ -469,14 +661,14 @@ class BuildTablaSimbolosVisitor(object):
             var.expresion_p.accept(self)
 
 
-    def visit_expresion_negada(self, expresion_negada):
+    def visit_expresion_negadaa(self, expresion_negada):
         self.id_expresion_negada += 1
         id_expresion_negada = self.id_expresion_negada
         self.ast += '-> "Expresion-negada ' + str(id_expresion_negada) + ': !"'  '\n'
         self.ast += '\t"Expresion-negada ' + str(id_expresion_negada) + ': !" '
         expresion_negada.expresion_logica_p.accept(self)
 
-    def visit_expresion_logica(self, expresion_logica):
+    def visit_expresion_logicaa(self, expresion_logica):
         self.id_expresion_logica += 1
         id_expresion_logica = self.id_expresion_logica
         if expresion_logica.expresion_logica_p is not None:
@@ -513,7 +705,7 @@ class BuildTablaSimbolosVisitor(object):
                 expresion_logica.expresion_simple_p.accept(self)
 
 
-    def visit_expresion_simple(self, expresion_simple):
+    def visit_expresion_simplea(self, expresion_simple):
         self.id_expresion_simple += 1
         id_expresion_simple = self.id_expresion_simple
         self.ast += '-> "Expresion-simple ' + str(id_expresion_simple) + ': ' + str(expresion_simple.relop_t) +\

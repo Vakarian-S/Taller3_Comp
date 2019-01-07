@@ -1,2 +1,3 @@
 error en declaracion de variable: VACUO a, ya fue declarada anteriormente
 error en llamado a variable: z, la variable no ha sido declarada
+error en declaracion de funcion: e, ya fue declarada anteriormente

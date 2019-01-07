@@ -39,6 +39,12 @@ class ScopedSymbolTable(object):
         print('Insert: %s' % symbol.name)
         self._symbols[symbol.name] = symbol
 
+    def append(self, symbol):
+        print('Insert: %s' % symbol.name)
+        if self._symbols.get(symbol.name) is None:
+            self._symbols[symbol.name] = []
+        self._symbols[symbol.name].append(symbol)
+
     def lookup(self, name, current_scope_only=False):
         print('Lookup: %s. (Scope name: %s)' % (name, self.scope_name))
         # 'symbol' is either an instance of the Symbol class or None

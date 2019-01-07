@@ -59,6 +59,56 @@ digraph G {
 	"Sentencia-comp 2" -> "Expresion 1: ="
 	23 [label="h"]
 	"Expresion 1: =" -> 23
-	24 [label="z"]
+	24 [label="2"]
 	"Expresion 1: =" -> 24
+	"Sentencia-comp 2" -> "Expresion 2: ="
+	25 [label="a"]
+	"Expresion 2: =" -> 25
+	"Expresion 2: =" -> "Expresion 3: ="
+	26 [label="h"]
+	"Expresion 3: =" -> 26
+	27 [label="5"]
+	"Expresion 3: =" -> 27
+	"Sentencia-comp 2" -> "Expresion-aditiva 1: +"
+	28 [label="h"]
+	"Expresion-aditiva 1: +" -> 28
+	29 [label="a"]
+	"Expresion-aditiva 1: +" -> 29
+	"lista-decl 1" -> "Declaracion-fun 3"
+	30 [label="ENT"]
+	"Declaracion-fun 3" -> 30
+	31 [label="e"]
+	"Declaracion-fun 3" -> 31
+	"Declaracion-fun 3" -> "Parametros 5"
+	32 [label="VACUO"]
+	"Parametros 5" -> 32
+	33 [label="f"]
+	"Parametros 5" -> 33
+	"Declaracion-fun 3" -> "Parametros 6"
+	34 [label="ENT"]
+	"Parametros 6" -> 34
+	35 [label="g"]
+	"Parametros 6" -> 35
+	"Declaracion-fun 3" -> "Sentencia-comp 3"
+	36 [label="z"]
+	"Sentencia-comp 3" -> 36
+	37 [label="1"]
+	"Sentencia-comp 3" -> 37
+	38 [label="ret"]
+	"Sentencia-comp 3" -> 38
+	"lista-decl 1" -> "Declaracion-fun 4"
+	39 [label="ENT"]
+	"Declaracion-fun 4" -> 39
+	40 [label="e"]
+	"Declaracion-fun 4" -> 40
+	"Declaracion-fun 4" -> "Parametros 7"
+	41 [label="VACUO"]
+	"Parametros 7" -> 41
+	42 [label="f"]
+	"Parametros 7" -> 42
+	"Declaracion-fun 4" -> "Parametros 8"
+	43 [label="ENT"]
+	"Parametros 8" -> 43
+	44 [label="g"]
+	"Parametros 8" -> 44
 }

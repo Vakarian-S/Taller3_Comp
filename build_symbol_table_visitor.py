@@ -7,6 +7,7 @@ from symbol_table import NodoSymbolTable
 #from symbol_table.nodo_variable import NodoVariable
 from symbol_table import ScopedSymbolTable
 from symbols import VarSymbol, ProcedureSymbol
+import re
 
 
 class BuildTablaSimbolosVisitor(object):
@@ -20,14 +21,6 @@ class BuildTablaSimbolosVisitor(object):
         self.errors_tabla_simbolos = archivo
         self.current_scope = None
 
-        lista_param = []
-        param = Param('ENT', 'x')
-        lista_param.append(param)
-        fun_output = DeclaracionFun('VACUO','output',param,None);
-        self.funciones.append(fun_output)
-        fun_input = DeclaracionFun('ENT','input',None,None)
-        self.funciones.append(fun_input)
-
     def visit_programa(self, programa):
         print('ENTER scope: global')
         global_scope = ScopedSymbolTable(
@@ -37,6 +30,27 @@ class BuildTablaSimbolosVisitor(object):
         )
         global_scope._init_builtins()
         self.current_scope = global_scope
+
+
+        #--------- Creacion input e output base----------
+
+        proc_input = 'input'
+        proc_output = 'output'
+        proc_input_symbol = ProcedureSymbol(proc_input)
+        proc_output_symbol = ProcedureSymbol(proc_output)
+        self.current_scope.insert(proc_input_symbol)
+        self.current_scope.insert(proc_output_symbol)
+        param_type = self.current_scope.lookup('VACUO')
+        param_name = 'vacio'
+        var_symbol = VarSymbol(param_name, param_type)
+        proc_input_symbol.params.append(var_symbol)
+
+        param_type = self.current_scope.lookup('ENT')
+        param_name = 'x'
+        var_symbol = VarSymbol(param_name, param_type)
+        proc_output_symbol.params.append(var_symbol)
+
+
         # Crear el nodo raiz y agregarlo.
         self.nodo = NodoSymbolTable()
         self.tabla_simbolos.root = self.nodo
@@ -62,15 +76,15 @@ class BuildTablaSimbolosVisitor(object):
         # Create the symbol and insert it into the symbol table.
         var_name = declaracion_var.ID_t
         var_symbol = VarSymbol(var_name, type_symbol)
-
         # Signal an error if the table alrady has a symbol
         # with the same name
         error_var = self.current_scope.lookup(var_name, current_scope_only=True)
         if error_var:
             self.errors_tabla_simbolos.write('error en declaracion de variable: '
              + str(type_name) +' ' + str(var_name) + ', ya fue declarada anteriormente'+'\n')
+        else:
+            self.current_scope.insert(var_symbol)
 
-        self.current_scope.insert(var_symbol)
         #error_var = self.current_scope.lookup(declaracion_var.ID_t);
         #if error_var is None:
             # Añadir la declaracion al nodo de la tabla de simbolos.
@@ -84,8 +98,40 @@ class BuildTablaSimbolosVisitor(object):
 
     def visit_declaracion_fun(self, declaracion_fun):
         proc_name = declaracion_fun.ID_t
-        proc_symbol = ProcedureSymbol(proc_name)
-        self.current_scope.insert(proc_symbol)
+        type_name = declaracion_fun.def_tipo_p
+        type_symbol = self.current_scope.lookup(type_name)
+        error_var_nombre = self.current_scope.lookup(proc_name,current_scope_only=True)
+        if error_var_nombre:
+            # ------------ Crear una lista con los parametros a usar --------
+            tipos_params = []
+            if declaracion_fun.parametros_p is not None:
+                if isinstance(declaracion_fun.parametros_p, list):
+                    params = declaracion_fun.parametros_p
+                else:
+                    params = [declaracion_fun.parametros_p]
+                for param in params:
+                    if param is not None:
+                        tipos_params.append(param.def_tipo_p)
+
+            # -- Revisar cada parametro
+            for funcion in error_var_nombre:
+
+                # ------------ Checkear si es una sobrecarga o un duplicado -------
+
+                # -- Checkeo por cantidad de parametros
+                if (len(funcion.params) == len(tipos_params)):
+                    # -- Checkeo por tipos de parametro
+                    match = True
+                    for tipo in range(len(funcion.params)):
+                        if str(funcion.params[tipo].type) != tipos_params[tipo]:
+                            match = False
+                            break
+                    if match == True:
+                        self.errors_tabla_simbolos.write('error en declaracion de funcion: '
+                                                         + str(proc_name) + ', ya fue declarada anteriormente' + '\n')
+
+        proc_symbol = ProcedureSymbol(proc_name, type=type_symbol)
+        self.current_scope.append(proc_symbol)
 
         print('ENTER scope: %s' % proc_name)
         # Scope for parameters and local variables
@@ -122,11 +168,34 @@ class BuildTablaSimbolosVisitor(object):
 
         if sentencia_comp.declaraciones_locales_p is not None:
             if isinstance(sentencia_comp.declaraciones_locales_p, list):
-                for stmt in sentencia_comp.declaraciones_locales_p:
-                    if stmt is not None:
-                        stmt.accept(self)
+                aux = sentencia_comp.declaraciones_locales_p
             else:
-                sentencia_comp.declaraciones_locales_p.accept(self)
+                aux = [sentencia_comp.declaraciones_locales_p]
+            for dclr in aux:
+                if dclr is not None:
+                    dclr.accept(self)
+
+        if sentencia_comp.lista_sentencias_p is not None:
+            if isinstance(sentencia_comp.lista_sentencias_p, list):
+                aux = sentencia_comp.lista_sentencias_p
+            else:
+                aux = [sentencia_comp.lista_sentencias_p]
+            for stmt in aux:
+                if stmt is not None:
+                    if isinstance(stmt, str):
+                        # --- Un string o es un numero, RET, o un id
+                        numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
+                        retRegex = re.compile(r'(?i:ret)')
+                        if not (numRegex.search(stmt) or retRegex.search(stmt)):
+                            var_name = stmt
+                            var_symbol = self.current_scope.lookup(var_name)
+                            if var_symbol is None:
+                                self.errors_tabla_simbolos.write('error en llamado a variable: '
+                                                                 + str(var_name) +
+                                                                 ', la variable no ha sido declarada' + '\n')
+                    else:
+                        stmt.accept(self)
+
 
         if sentencia_comp.lista_sentencias_p is not None:
             if isinstance(sentencia_comp.lista_sentencias_p, list):
@@ -154,16 +223,43 @@ class BuildTablaSimbolosVisitor(object):
             self.errors_tabla_simbolos.write('error en llamado a variable: '
                                              + str(var_name) +
                                              ', la variable no ha sido declarada' + '\n')
+
         if isinstance(expresion.expresion_p, str):
-            var_name2 = expresion.expresion_p
-            var_symbol2 = self.current_scope.lookup(var_name2)
-            if var_symbol2 is None:
-                self.errors_tabla_simbolos.write('error en llamado a variable: '
+            numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
+            if not (numRegex.search(expresion.expresion_p)):
+                var_name2 = expresion.expresion_p
+                var_symbol2 = self.current_scope.lookup(var_name2)
+                if var_symbol2 is None:
+                    self.errors_tabla_simbolos.write('error en llamado a variable: '
                                                  + str(var_name2) +
                                                  ', la variable no ha sido declarada' + '\n')
         else:
             expresion.expresion_p.accept(self)
 
+    def visit_expresion_aditiva(self, expresion_aditiva):
+        if isinstance(expresion_aditiva.expresion_aditiva_p, str):
+            numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
+            if not (numRegex.search(expresion_aditiva.expresion_aditiva_p)):
+                var_name2 = expresion_aditiva.expresion_aditiva_p
+                var_symbol2 = self.current_scope.lookup(var_name2)
+                if var_symbol2 is None:
+                    self.errors_tabla_simbolos.write('error en llamado a variable: '
+                                                     + str(var_name2) +
+                                                     ', la variable no ha sido declarada' + '\n')
+        else:
+            expresion_aditiva.expresion_aditiva_p.accept(self)
+
+        if isinstance(expresion_aditiva.term_p, str):
+            numRegex = re.compile(r'(([0-9]|[a-f])+\#16)|[0-7]+\#8|[0-9]+')
+            if not (numRegex.search(expresion_aditiva.term_p)):
+                var_name2 = expresion_aditiva.term_p
+                var_symbol2 = self.current_scope.lookup(var_name2)
+                if var_symbol2 is None:
+                    self.errors_tabla_simbolos.write('error en llamado a variable: '
+                                                     + str(var_name2) +
+                                                     ', la variable no ha sido declarada' + '\n')
+        else:
+            expresion_aditiva.term_p.accept(self)
 
     #----------------------------------
 
@@ -453,7 +549,7 @@ class BuildTablaSimbolosVisitor(object):
             self.ast += '\t"Expresion-simple ' + str(id_expresion_simple) + ': ' + str(expresion_simple.relop_t) + '" '
             expresion_simple.expresion_aditiva_p.accept(self)
 
-    def visit_expresion_aditiva(self, expresion_aditiva):
+    def visit_expresion_aditivaa(self, expresion_aditiva):
         self.id_expresion_aditiva += 1
         id_expresion_aditiva = self.id_expresion_aditiva
         self.ast += '-> "Expresion-aditiva ' + str(id_expresion_aditiva) + ': '+ str(expresion_aditiva.addop_t) +\
